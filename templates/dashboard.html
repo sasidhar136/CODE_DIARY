@@ -1,0 +1,148 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+    <div class="header-card">
+        <div class="d-flex align-items-center mb-3">
+            <i class="fas fa-book-open me-3" style="font-size: 2rem;"></i>
+            <div>
+                <h1>Code Diary Dashboard</h1>
+                <p>Track your coding journey and celebrate your achievements</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="stats-grid">
+        <div class="stat-card">
+            <i class="fas fa-code"></i>
+            <h3>{{ entries|length if entries else 0 }}</h3>
+            <p>Total Entries</p>
+        </div>
+        <div class="stat-card">
+            <i class="fas fa-calendar-week"></i>
+            {# Calculate this week's entries using Python's datetime.now() and timedelta #}
+            <h3>
+                {% set seven_days_ago = now() - timedelta(days=7) %}
+                {{ entries | selectattr('timestamp', 'ge', seven_days_ago) | list | length if entries else 0 }}
+            </h3>
+            <p>This Week</p>
+        </div>
+        <div class="stat-card">
+            <i class="fas fa-fire"></i>
+            {# Streak logic is more complex and would need backend implementation #}
+            <h3>--</h3> 
+            <p>Day Streak</p>
+        </div>
+    </div>
+
+    <div class="action-buttons">
+        <a href="{{ url_for('new_entry') }}" class="btn-gradient btn-success">
+            <i class="fas fa-plus"></i>
+            Add New Entry
+        </a>
+        <a href="{{ url_for('weekly_summary') }}" class="btn-gradient btn-warning">
+            <i class="fas fa-chart-line"></i>
+            Weekly Summary
+        </a>
+        <a href="{{ url_for('export_pdf') }}" class="btn-gradient">
+            <i class="fas fa-download"></i>
+            Export to PDF
+        </a>
+        <form action="{{ url_for('clear_all_entries') }}" method="POST" style="display: inline;" 
+              onsubmit="return confirm('Are you sure you want to delete ALL entries? This cannot be undone!');">
+            <button type="submit" class="btn-gradient btn-danger">
+                <i class="fas fa-trash"></i>
+                Clear All Entries
+            </button>
+        </form>
+    </div>
+
+    {% if entries %}
+        {% for entry in entries %}
+            <div class="entry-card">
+                <div class="entry-header">
+                    <div class="entry-badge">
+                        <i class="fas fa-bookmark me-2"></i>
+                        Entry #{{ entry.id }}
+                    </div>
+                    <div class="entry-timestamp">
+                        <i class="fas fa-clock"></i>
+                        {{ entry.timestamp.strftime('%B %d, %Y at %I:%M %p') }}
+                    </div>
+                </div>
+                
+                <div class="entry-content">{{ entry.content }}</div>
+                
+                {% if entry.summary %}
+                    <div class="ai-summary">
+                        <div class="ai-summary-header">
+                            <i class="fas fa-robot"></i>
+                            AI Summary:
+                        </div>
+                        <div class="ai-summary-content">{{ entry.summary }}</div>
+                    </div>
+                {% else %}
+                    <div class="ai-summary">
+                        <div class="ai-summary-header">
+                            <i class="fas fa-hourglass-half"></i>
+                            AI Summary:
+                        </div>
+                        <div class="ai-summary-content">Summary pending...</div>
+                    </div>
+                {% endif %}
+            </div>
+        {% endfor %}
+    {% else %}
+        <div class="empty-state">
+            <i class="fas fa-book-open"></i>
+            <h3>No entries yet</h3>
+            <p>Start your coding journey by adding your first learning entry!</p>
+            <a href="{{ url_for('new_entry') }}" class="btn-gradient btn-success">
+                <i class="fas fa-plus"></i>
+                Add Your First Entry
+            </a>
+        </div>
+    {% endif %}
+{% endblock %}
+
+{% block scripts %}
+    <script>
+        // JS specific to dashboard, like entry card animations
+        document.addEventListener('DOMContentLoaded', function() {
+            const observerOptions = {
+                threshold: 0.1,
+                rootMargin: '0px 0px -50px 0px'
+            };
+
+            const observer = new IntersectionObserver(function(entries) {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.opacity = '1';
+                        entry.target.style.transform = 'translateY(0)';
+                    }
+                });
+            }, observerOptions);
+
+            document.querySelectorAll('.entry-card').forEach(card => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(30px)';
+                card.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+                observer.observe(card);
+            });
+        });
+
+        // Add the global ripple effect JS here as well if you want it on dashboard buttons
+        document.querySelectorAll('.btn-gradient').forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                let ripple = document.createElement('span');
+                ripple.classList.add('ripple');
+                this.appendChild(ripple);
+                
+                setTimeout(() => {
+                    ripple.remove();
+                }, 600);
+            });
+        });
+    </script>
+{% endblock %}

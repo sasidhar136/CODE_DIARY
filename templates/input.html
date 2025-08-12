@@ -1,0 +1,177 @@
+{% extends 'base.html' %}
+
+{% block title %}Add New Entry{% endblock %}
+
+{% block content %}
+    <div class="main-card">
+        <div class="header-section">
+            <div class="header-icon">
+                <i class="fas fa-plus"></i>
+            </div>
+            <h1>What I Learned Today</h1>
+            <p class="subtitle">Capture your coding insights and breakthroughs</p>
+        </div>
+
+        <div class="tips-section">
+            <div class="tips-header">
+                <i class="fas fa-lightbulb"></i>
+                <span>Writing Tips</span>
+            </div>
+            <ul class="tips-list">
+                <li>Be specific about what you learned (e.g., "Mastered Flask routes")</li>
+                <li>Include challenges you overcame and how you solved them</li>
+                <li>Mention any "aha!" moments or breakthroughs</li>
+                <li>Note resources that helped you understand concepts</li>
+            </ul>
+        </div>
+
+        <form action="{{ url_for('add_entry') }}" method="POST" id="entryForm">
+            <div class="form-section">
+                <label for="content" class="form-label">
+                    <i class="fas fa-pen"></i>
+                    Today's Learning:
+                </label>
+                <textarea 
+                    class="form-control" 
+                    id="content" 
+                    name="content" 
+                    rows="10" 
+                    required 
+                    placeholder="Describe what you learned today (e.g., 'Mastered Flask routes', 'Understood SQL joins', 'Debugged a tricky Python error')..."
+                    maxlength="2000"
+                ></textarea>
+                <div class="character-counter">
+                    <span id="charCount">0</span> / 2000 characters
+                </div>
+            </div>
+
+            <div class="button-section">
+                <button type="submit" class="btn-gradient" id="saveBtn">
+                    <i class="fas fa-save"></i>
+                    Save Entry
+                </button>
+                <a href="{{ url_for('dashboard') }}" class="btn-gradient btn-secondary">
+                    <i class="fas fa-times"></i>
+                    Cancel
+                </a>
+            </div>
+        </form>
+    </div>
+
+    <div class="back-link">
+        <a href="{{ url_for('dashboard') }}">
+            <i class="fas fa-arrow-left"></i>
+            View Dashboard
+        </a>
+    </div>
+{% endblock %}
+
+{% block scripts %}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const textarea = document.getElementById('content');
+            const charCount = document.getElementById('charCount');
+            const saveBtn = document.getElementById('saveBtn');
+            const form = document.getElementById('entryForm');
+
+            // Character counter
+            textarea.addEventListener('input', function() {
+                const count = this.value.length;
+                charCount.textContent = count;
+                
+                if (count > 1800) {
+                    charCount.style.color = '#dc3545';
+                } else if (count > 1500) {
+                    charCount.style.color = '#fd7e14';
+                } else {
+                    charCount.style.color = '#6c757d';
+                }
+            });
+
+            // Auto-resize textarea
+            textarea.addEventListener('input', function() {
+                this.style.height = 'auto';
+                this.style.height = Math.max(200, this.scrollHeight) + 'px';
+            });
+
+            // Form submission with loading state
+            form.addEventListener('submit', function(e) {
+                if (textarea.value.trim() === '') {
+                    e.preventDefault();
+                    // Custom alert integration - relies on flash messages being used
+                    // If you have a custom alert function, place it here or ensure flask flash messages cover it
+                    return;
+                }
+
+                saveBtn.classList.add('loading');
+                saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
+                saveBtn.disabled = true;
+            });
+
+            // Add ripple effect to buttons (re-added here as it's part of your custom UI)
+            document.querySelectorAll('.btn-gradient').forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    if (this.classList.contains('loading')) return;
+                    
+                    let ripple = document.createElement('span');
+                    let rect = this.getBoundingClientRect();
+                    let size = Math.max(rect.width, rect.height);
+                    let x = e.clientX - rect.left - size / 2;
+                    let y = e.clientY - rect.top - size / 2;
+                    
+                    ripple.style.cssText = `
+                        position: absolute;
+                        width: ${size}px;
+                        height: ${size}px;
+                        left: ${x}px;
+                        top: ${y}px;
+                        background: rgba(255,255,255,0.5);
+                        border-radius: 50%;
+                        transform: scale(0);
+                        animation: ripple-effect 0.6s linear;
+                        pointer-events: none;
+                    `;
+                    
+                    this.appendChild(ripple);
+                    
+                    setTimeout(() => {
+                        ripple.remove();
+                    }, 600);
+                });
+            });
+
+            // Auto-save draft functionality
+            let autoSaveTimer;
+            textarea.addEventListener('input', function() {
+                clearTimeout(autoSaveTimer);
+                autoSaveTimer = setTimeout(() => {
+                    localStorage.setItem('diary_draft', this.value);
+                }, 1000);
+            });
+
+            // Load draft on page load
+            const draft = localStorage.getItem('diary_draft');
+            if (draft && textarea.value === '') {
+                textarea.value = draft;
+                textarea.dispatchEvent(new Event('input')); // Trigger input event to update char count and resize
+            }
+
+            // Clear draft on successful submission
+            form.addEventListener('submit', function() {
+                setTimeout(() => {
+                    localStorage.removeItem('diary_draft');
+                }, 100);
+            });
+
+            // Focus animation
+            textarea.addEventListener('focus', function() {
+                this.parentElement.style.transform = 'scale(1.02)';
+                this.parentElement.style.transition = 'transform 0.3s ease';
+            });
+
+            textarea.addEventListener('blur', function() {
+                this.parentElement.style.transform = 'scale(1)';
+            });
+        });
+    </script>
+{% endblock %}

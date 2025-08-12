@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+
+{% block title %}Weekly Summary{% endblock %}
+
+{% block content %}
+    <div class="main-card">
+        <div class="header-section">
+            <div class="header-icon" style="background: var(--warning-gradient);">
+                <i class="fas fa-chart-line"></i>
+            </div>
+            <h1>Weekly Code Diary Summary</h1>
+            <p class="subtitle">A high-level overview of your learning from the past 7 days.</p>
+        </div>
+
+        {% if weekly_summary %}
+            <div class="card p-4 shadow-sm ai-summary" style="border-left: 4px solid var(--warning-gradient);">
+                <div class="ai-summary-header">
+                    <i class="fas fa-robot"></i>
+                    AI Generated Summary:
+                </div>
+                <p class="ai-summary-content lead">{{ weekly_summary }}</p>
+            </div>
+        {% else %}
+            <div class="empty-state">
+                <i class="fas fa-hourglass-half"></i>
+                <h3>No Recent Learning</h3>
+                <p>No entries found for the last 7 days, or unable to generate a summary. Start logging your daily learnings to see your weekly progress here!</p>
+                <a href="{{ url_for('new_entry') }}" class="btn-gradient btn-success">
+                    <i class="fas fa-plus"></i>
+                    Add Your First Entry
+                </a>
+            </div>
+        {% endif %}
+
+        <div class="button-section mt-4">
+            <a href="{{ url_for('dashboard') }}" class="btn-gradient btn-secondary">
+                <i class="fas fa-arrow-left"></i>
+                Back to Dashboard
+            </a>
+            <a href="{{ url_for('new_entry') }}" class="btn-gradient btn-primary">
+                <i class="fas fa-plus"></i>
+                Add New Entry
+            </a>
+        </div>
+    </div>
+{% endblock %}
