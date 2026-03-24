@@ -11,14 +11,14 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <!-- Added Google Fonts for better typography -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     {% block head_content %}{% endblock %}
 </head>
 <body class="d-flex flex-column min-vh-100">
     <!-- Enhanced navbar with modern styling -->
     <nav class="navbar navbar-expand-lg modern-navbar">
         <div class="container-fluid">
-            <a class="navbar-brand modern-brand" href="{{ url_for('dashboard') }}">
+            <a class="navbar-brand modern-brand" href="{{ url_for('main.dashboard') }}">
                 <div class="brand-icon">
                     <i class="fas fa-code"></i>
                 </div>
@@ -34,19 +34,19 @@
                 <!-- Added mobile-nav class for mobile-specific styling -->
                 <ul class="navbar-nav ms-auto mobile-nav">
                     <li class="nav-item">
-                        <a class="nav-link modern-nav-link {% if request.endpoint == 'new_entry' %}active{% endif %}" href="{{ url_for('new_entry') }}">
+                        <a class="nav-link modern-nav-link {% if request.endpoint == 'entries.new_entry' %}active{% endif %}" href="{{ url_for('entries.new_entry') }}">
                             <i class="fas fa-plus-circle"></i>
                             <span>New Entry</span>
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link modern-nav-link {% if request.endpoint == 'dashboard' %}active{% endif %}" href="{{ url_for('dashboard') }}">
+                        <a class="nav-link modern-nav-link {% if request.endpoint == 'main.dashboard' %}active{% endif %}" href="{{ url_for('main.dashboard') }}">
                             <i class="fas fa-chart-line"></i>
                             <span>Dashboard</span>
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link modern-nav-link {% if request.endpoint == 'weekly_summary' %}active{% endif %}" href="{{ url_for('weekly_summary') }}">
+                        <a class="nav-link modern-nav-link {% if request.endpoint == 'entries.weekly_summary' %}active{% endif %}" href="{{ url_for('entries.weekly_summary') }}">
                             <i class="fas fa-calendar-week"></i>
                             <span>Weekly Summary</span>
                         </a>
@@ -57,13 +57,13 @@
                             <span>Tools</span>
                         </a>
                         <ul class="dropdown-menu modern-dropdown" aria-labelledby="navbarDropdown">
-                            <li><a class="dropdown-item modern-dropdown-item" href="{{ url_for('export_pdf') }}">
+                            <li><a class="dropdown-item modern-dropdown-item" href="{{ url_for('export.export_pdf') }}">
                                 <i class="fas fa-file-pdf"></i>
                                 Export to PDF
                             </a></li>
                             <li><hr class="dropdown-divider modern-divider"></li>
                             <li>
-                                <form action="{{ url_for('clear_all_entries') }}" method="POST" onsubmit="return confirm('Are you sure you want to delete ALL entries? This cannot be undone!');">
+                                <form action="{{ url_for('entries.clear_all_entries') }}" method="POST" onsubmit="return confirm('Are you sure you want to delete ALL entries? This cannot be undone!');">
                                     <button type="submit" class="dropdown-item modern-dropdown-item danger-item">
                                         <i class="fas fa-trash-alt"></i>
                                         Clear All Entries

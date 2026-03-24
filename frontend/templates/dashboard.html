@@ -37,19 +37,19 @@
     </div>
 
     <div class="action-buttons">
-        <a href="{{ url_for('new_entry') }}" class="btn-gradient btn-success">
+        <a href="{{ url_for('entries.new_entry') }}" class="btn-gradient btn-success">
             <i class="fas fa-plus"></i>
             Add New Entry
         </a>
-        <a href="{{ url_for('weekly_summary') }}" class="btn-gradient btn-warning">
+        <a href="{{ url_for('entries.weekly_summary') }}" class="btn-gradient btn-warning">
             <i class="fas fa-chart-line"></i>
             Weekly Summary
         </a>
-        <a href="{{ url_for('export_pdf') }}" class="btn-gradient">
+        <a href="{{ url_for('export.export_pdf') }}" class="btn-gradient">
             <i class="fas fa-download"></i>
             Export to PDF
         </a>
-        <form action="{{ url_for('clear_all_entries') }}" method="POST" style="display: inline;" 
+        <form action="{{ url_for('entries.clear_all_entries') }}" method="POST" style="display: inline;" 
               onsubmit="return confirm('Are you sure you want to delete ALL entries? This cannot be undone!');">
             <button type="submit" class="btn-gradient btn-danger">
                 <i class="fas fa-trash"></i>
@@ -98,7 +98,7 @@
             <i class="fas fa-book-open"></i>
             <h3>No entries yet</h3>
             <p>Start your coding journey by adding your first learning entry!</p>
-            <a href="{{ url_for('new_entry') }}" class="btn-gradient btn-success">
+            <a href="{{ url_for('entries.new_entry') }}" class="btn-gradient btn-success">
                 <i class="fas fa-plus"></i>
                 Add Your First Entry
             </a>

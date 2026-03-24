@@ -25,7 +25,7 @@
                 <i class="fas fa-hourglass-half"></i>
                 <h3>No Recent Learning</h3>
                 <p>No entries found for the last 7 days, or unable to generate a summary. Start logging your daily learnings to see your weekly progress here!</p>
-                <a href="{{ url_for('new_entry') }}" class="btn-gradient btn-success">
+                <a href="{{ url_for('entries.new_entry') }}" class="btn-gradient btn-success">
                     <i class="fas fa-plus"></i>
                     Add Your First Entry
                 </a>
@@ -33,11 +33,11 @@
         {% endif %}
 
         <div class="button-section mt-4">
-            <a href="{{ url_for('dashboard') }}" class="btn-gradient btn-secondary">
+            <a href="{{ url_for('main.dashboard') }}" class="btn-gradient btn-secondary">
                 <i class="fas fa-arrow-left"></i>
                 Back to Dashboard
             </a>
-            <a href="{{ url_for('new_entry') }}" class="btn-gradient btn-primary">
+            <a href="{{ url_for('entries.new_entry') }}" class="btn-gradient btn-primary">
                 <i class="fas fa-plus"></i>
                 Add New Entry
             </a>
