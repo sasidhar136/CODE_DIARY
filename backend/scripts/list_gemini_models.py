@@ -7,13 +7,6 @@ load_dotenv()
 # Ensure your API key is configured (using environment variable as before)
 genai.configure(api_key=os.environ.get("GOOGLE_API_KEY"))
 
-# If the environment variable method is still giving you trouble, temporarily hardcode for this script:
-# genai.configure(api_key="AIzaSyAE95F3kGk-Ilr4gvhSPkf6iQLk5lR2hRA") # <-- USE YOUR ACTUAL KEY
-
-# REMOVE THIS BLOCK (3 lines):
-# if not genai.api_key:
-#     print("Error: GOOGLE_API_KEY environment variable not set. Please set it before running this script.")
-#     exit()
 
 print("--- Listing Available Gemini Models ---")
 try:
