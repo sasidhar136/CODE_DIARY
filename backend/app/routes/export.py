@@ -4,13 +4,15 @@ Export routes for generating PDF and other formats
 from flask import send_file
 from io import BytesIO
 from fpdf import FPDF
+from flask_login import login_required, current_user
 from app.routes import export_bp
 from app.models import Entry
 
 @export_bp.route('/pdf')
+@login_required
 def export_pdf():
     """Export all entries as PDF"""
-    entries = Entry.query.order_by(Entry.timestamp.asc()).all()
+    entries = Entry.query.filter_by(user_id=current_user.id).order_by(Entry.timestamp.asc()).all()
 
     pdf = FPDF()
     pdf.set_auto_page_break(auto=True, margin=15)

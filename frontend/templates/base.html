@@ -33,6 +33,7 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <!-- Added mobile-nav class for mobile-specific styling -->
                 <ul class="navbar-nav ms-auto mobile-nav">
+                    {% if current_user.is_authenticated %}
                     <li class="nav-item">
                         <a class="nav-link modern-nav-link {% if request.endpoint == 'entries.new_entry' %}active{% endif %}" href="{{ url_for('entries.new_entry') }}">
                             <i class="fas fa-plus-circle"></i>
@@ -72,6 +73,26 @@
                             </li>
                         </ul>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link modern-nav-link" href="{{ url_for('auth.logout') }}">
+                            <i class="fas fa-sign-out-alt"></i>
+                            <span>Logout ({{ current_user.username }})</span>
+                        </a>
+                    </li>
+                    {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link modern-nav-link {% if request.endpoint == 'auth.login' %}active{% endif %}" href="{{ url_for('auth.login') }}">
+                            <i class="fas fa-sign-in-alt"></i>
+                            <span>Login</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link modern-nav-link {% if request.endpoint == 'auth.signup' %}active{% endif %}" href="{{ url_for('auth.signup') }}">
+                            <i class="fas fa-user-plus"></i>
+                            <span>Sign Up</span>
+                        </a>
+                    </li>
+                    {% endif %}
                 </ul>
             </div>
         </div>

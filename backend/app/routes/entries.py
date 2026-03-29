@@ -3,17 +3,20 @@ Entry management routes
 """
 from flask import render_template, redirect, request, url_for, flash
 from datetime import datetime, timedelta
+from flask_login import login_required, current_user
 from app.routes import entries_bp
 from app.models import Entry
 from app import db
 from app.utils.ai_summary import get_ai_summary
 
 @entries_bp.route('/new')
+@login_required
 def new_entry():
     """Show new entry form"""
     return render_template('input.html', now=datetime.now)
 
 @entries_bp.route('/add', methods=['POST'])
+@login_required
 def add_entry():
     """Add a new entry"""
     if request.method == 'POST':
@@ -23,7 +26,7 @@ def add_entry():
             return redirect(url_for('entries.new_entry'))
     
     summary = get_ai_summary(content)
-    new_entry = Entry(content=content, summary=summary)
+    new_entry = Entry(content=content, summary=summary, user_id=current_user.id)
     
     try:
         db.session.add(new_entry)
@@ -41,10 +44,11 @@ def add_entry():
     return redirect(url_for('entries.new_entry'))
 
 @entries_bp.route('/clear', methods=['POST'])
+@login_required
 def clear_all_entries():
-    """Clear all entries"""
+    """Clear all entries for the current user"""
     try:
-        num_deleted = db.session.query(Entry).delete()
+        num_deleted = db.session.query(Entry).filter_by(user_id=current_user.id).delete()
         db.session.commit()
         flash(f'Successfully deleted {num_deleted} entries!', 'success')
     except Exception as e:
@@ -53,10 +57,12 @@ def clear_all_entries():
     return redirect(url_for('main.dashboard'))
 
 @entries_bp.route('/weekly-summary')
+@login_required
 def weekly_summary():
-    """Show weekly summary of entries"""
+    """Show weekly summary of entries for the current user"""
     seven_days_ago = datetime.now() - timedelta(days=7)
     recent_entries = Entry.query.filter(
+        Entry.user_id == current_user.id,
         Entry.timestamp >= seven_days_ago
     ).order_by(Entry.timestamp.asc()).all()
 
