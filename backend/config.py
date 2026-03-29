@@ -15,7 +15,12 @@ class Config:
     
     # Database
     basedir = os.path.abspath(os.path.dirname(__file__))
-    SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(basedir, 'instance', 'code_diary.db')
+    
+    # Ensure the instance folder exists for the SQLite database
+    instance_path = os.path.join(basedir, 'instance')
+    os.makedirs(instance_path, exist_ok=True)
+    
+    SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(instance_path, 'code_diary.db')
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     
     # Google AI
